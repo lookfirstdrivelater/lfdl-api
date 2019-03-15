@@ -5,6 +5,7 @@ plugins {
 dependencies {
     golang {
         build 'github.com/gin-gonic/gin'
+        build 'github.com/gin-gonic/autotls'
     }
 }
 
