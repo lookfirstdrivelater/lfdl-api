@@ -6,12 +6,13 @@ dependencies {
     golang {
         build 'github.com/gin-gonic/gin'
         build 'github.com/gin-gonic/autotls'
+        build 'github.com/gin-gonic/contrib/cors'
     }
 }
 
 goBuild {
     // Cross-compile output
-    targetPlatform = ['windows-amd64', 'linux-amd64', 'linux-386']
+    targetPlatform = ['linux-amd64']
     
     // Output location, can be relative path (to project root) or absolute path
     // The ${} placeholder will be rendered in cross-compile

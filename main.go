@@ -4,18 +4,26 @@ import (
 	"log"
 
 	"github.com/gin-gonic/autotls"
+	"github.com/gin-gonic/contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	r := gin.Default()
+	router := gin.Default()
 
-	r.GET("/ping", func(c *gin.Context) {
+	config := cors.DefaultConfig()
+	config.AllowAllOrigins = true
+	config.AllowCredentials = true
+	config.AllowedMethods = []string{"GET", "POST"}
+
+	router.Use(cors.New(config))
+
+	router.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": "pong",
 		})
 	})
 
-	log.Fatal(autotls.Run(r, "stupidcpu.com"))
-	// r.Run() // listen and serve on 0.0.0.0:8080
+	log.Fatal(autotls.Run(router, "stupidcpu.com"))
+
 }
