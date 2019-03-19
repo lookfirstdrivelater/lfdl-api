@@ -5,8 +5,10 @@ plugins {
 dependencies {
     golang {
         build 'github.com/gin-gonic/gin'
-        build 'github.com/gin-gonic/autotls'
-        build 'github.com/gin-gonic/contrib/cors'
+        build 'github.com/appleboy/gin-jwt'
+        build 'github.com/stvp/roll'
+        build 'github.com/gin-contrib/rollbar'
+        build 'github.com/joho/godotenv'
     }
 }
 

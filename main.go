@@ -1,29 +1,52 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"os"
 
-	"github.com/gin-gonic/autotls"
-	"github.com/gin-gonic/contrib/cors"
+	jwt "github.com/appleboy/gin-jwt"
+	"github.com/gin-contrib/rollbar"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
+	"github.com/stvp/roll"
 )
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
 	router := gin.Default()
 
-	config := cors.DefaultConfig()
-	config.AllowAllOrigins = true
-	config.AllowCredentials = true
-	config.AllowedMethods = []string{"GET", "POST"}
+	roll.Token = os.Getenv("RollBarToken")
+	roll.Endpoint = os.Getenv("RollBarEnv")
+	//roll.Environment = "production" // defaults to "development"
+	router.Use(rollbar.Recovery(true))
+	roll.Info("Starting server", map[string]string{})
+	fmt.Println("Useing Rollbar reporting")
 
-	router.Use(cors.New(config))
+	authMiddleware, _ := authMiddleware()
 
-	router.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
+	router.POST("/login", authMiddleware.LoginHandler)
+	router.NoRoute(authMiddleware.MiddlewareFunc(), func(c *gin.Context) {
+		claims := jwt.ExtractClaims(c)
+		log.Printf("NoRoute claims: %#v\n", claims)
+		c.JSON(404, gin.H{"code": "PAGE_NOT_FOUND", "message": "Page not found"})
 	})
 
-	log.Fatal(autotls.Run(router, "stupidcpu.com"))
+	// all auth routes
+	authRouter := router.Group("/auth")
+	// Refresh time can be longer than token timeout
+	authRouter.GET("/refresh_token", authMiddleware.RefreshHandler)
+	authRouter.Use(authMiddleware.MiddlewareFunc())
+	{
+		authRouter.GET("/hello", helloHandler)
+	}
 
+	// not auth routes
+	router.GET("/ping", pingHandler)
+
+	// staring the server
+	router.Run(":8080")
 }
