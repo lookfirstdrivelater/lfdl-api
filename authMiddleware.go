@@ -15,6 +15,7 @@ type login struct {
 	Password string `form:"password" json:"password" binding:"required"`
 }
 
+// User a user struct
 type User struct {
 	UserName  string
 	FirstName string
