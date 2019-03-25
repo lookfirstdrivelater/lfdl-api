@@ -35,12 +35,11 @@ func main() {
 		c.JSON(404, gin.H{"code": "PAGE_NOT_FOUND", "message": "Page not found"})
 	})
 
-	// all auth routes
 	authRouter := router.Group("/auth")
 	// Refresh time can be longer than token timeout
 	authRouter.GET("/refresh_token", authMiddleware.RefreshHandler)
 	authRouter.Use(authMiddleware.MiddlewareFunc())
-	{
+	{ // all our auth routes
 		authRouter.GET("/hello", helloHandler)
 	}
 
