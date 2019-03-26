@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -10,11 +11,43 @@ import (
 	"github.com/stvp/roll"
 )
 
-func init() {
+const versionNumber = "0.0.0"
 
+var (
+	help       bool
+	version    bool
+	portNumber int
+)
+
+func printHelp() {
+	flag.PrintDefaults()
+	os.Exit(0)
+}
+
+func printVersion() {
+	fmt.Println(versionNumber)
+	os.Exit(0)
+}
+
+func printArgs() {
+	if version {
+		printVersion()
+	}
+	if help {
+		printHelp()
+	}
+}
+
+func init() {
+	flag.BoolVar(&help, "help", false, "Prints out avaliable commands")
+	flag.BoolVar(&version, "version", false, "prints the version number")
+	flag.IntVar(&portNumber, "port", 8080, "set custom port number")
+	flag.Parse()
 }
 
 func main() {
+	printArgs()
+
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
@@ -30,5 +63,6 @@ func main() {
 	fmt.Println("Useing Rollbar reporting")
 
 	// staring the server
-	router.Run(":8080")
+	webServerPort := fmt.Sprintf(":%d", portNumber)
+	router.Run(webServerPort)
 }
