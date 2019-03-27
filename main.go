@@ -11,7 +11,7 @@ import (
 	"github.com/stvp/roll"
 )
 
-const versionNumber = "0.0.0"
+const versionNumber = "0.3.0"
 
 var (
 	help       bool
@@ -60,9 +60,7 @@ func main() {
 	//roll.Environment = "production" // defaults to "development"
 	router.Use(rollbar.Recovery(true))
 	roll.Info("Starting server", map[string]string{})
-	fmt.Println("Useing Rollbar reporting")
 
-	// staring the server
-	webServerPort := fmt.Sprintf(":%d", portNumber)
-	router.Run(webServerPort)
+	// start the server
+	router.Run(fmt.Sprintf(":%d", portNumber))
 }

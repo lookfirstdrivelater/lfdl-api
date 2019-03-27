@@ -12,7 +12,7 @@ func setupRouter() *gin.Engine {
 
 	authMiddleware, _ := authMiddleware()
 
-	router.POST("/login", authMiddleware.LoginHandler)
+	router.GET("/login", authMiddleware.LoginHandler)
 	router.NoRoute(authMiddleware.MiddlewareFunc(), func(c *gin.Context) {
 		claims := jwt.ExtractClaims(c)
 		log.Printf("NoRoute claims: %#v\n", claims)
