@@ -73,6 +73,26 @@ func TestLogin(t *testing.T) {
 	// assert.Equal(t, body["code"], value)
 }
 
+func TestBadRequest(t *testing.T) {
+	// Build our expected body
+	// Grab our router
+	router := setupRouter()
+	// Perform a POST request with that handler.
+	w := performRequest(router, "GET", "/fg")
+	// Assert we encoded correctly,
+	// the request gives a 200
+	assert.Equal(t, http.StatusUnauthorized, w.Code)
+	// Convert the JSON response to a map
+	// var response map[string]string
+	// err := json.Unmarshal([]byte(w.Body.String()), &response)
+	// // Grab the value & whether or not it exists
+	// value, exists := response["code"]
+	// // Make some assertions on the correctness of the response.
+	// assert.Nil(t, err)
+	// assert.True(t, exists)
+	// assert.Equal(t, body["code"], value)
+}
+
 func Login() string {
 	router := setupRouter()
 	w := performRequest(router, "GET", "/login?username=admin&password=admin")
