@@ -1,1 +1,3 @@
-# Right now this will just be in the api folder but the parts will be getting distributed to the correct sections
+# authapi 
+
+authapi is an api to provide auth services to all other services on in lfdl. The goal of this is to make only one place to auth against so we have more control over how everything works.
