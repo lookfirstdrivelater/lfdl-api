@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// SetupRouter sets up the router so it can be used in the main and in testing
 func SetupRouter() *gin.Engine {
 	router := gin.Default()
 
