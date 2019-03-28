@@ -3,10 +3,9 @@ package authapi
 import (
 	"time"
 
-	internalauthapi "github.com/lookfirstdrivelater/lfdlapi/internal/authapi"
-
 	jwt "github.com/appleboy/gin-jwt"
 	"github.com/gin-gonic/gin"
+	"github.com/lookfirstdrivelater/lfdlapi/internal/middleware"
 )
 
 var identityKey = "id"
@@ -16,7 +15,7 @@ func helloHandler(c *gin.Context) {
 	user, _ := c.Get(identityKey)
 	c.JSON(200, gin.H{
 		"userID":   claims["id"],
-		"userName": user.(*internalauthapi.User).UserName,
+		"userName": user.(*middleware.User).UserName,
 		"text":     "Hello World.",
 	})
 }

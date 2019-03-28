@@ -3,17 +3,16 @@ package authapi
 import (
 	"log"
 
-	internalauthapi "github.com/lookfirstdrivelater/lfdlapi/internal/authapi"
-
 	jwt "github.com/appleboy/gin-jwt"
 	"github.com/gin-gonic/gin"
+	"github.com/lookfirstdrivelater/lfdlapi/internal/middleware"
 )
 
 // SetupRouter sets up the router so it can be used in the main and in testing
 func SetupRouter() *gin.Engine {
 	router := gin.Default()
 
-	authMiddleware, _ := internalauthapi.AuthMiddleware()
+	authMiddleware, _ := middleware.AuthMiddleware()
 
 	router.POST("/login", authMiddleware.LoginHandler)
 	router.NoRoute(authMiddleware.MiddlewareFunc(), func(c *gin.Context) {
