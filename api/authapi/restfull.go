@@ -14,7 +14,7 @@ func SetupRouter() *gin.Engine {
 
 	authMiddleware, _ := internalauthapi.AuthMiddleware()
 
-	router.GET("/login", authMiddleware.LoginHandler)
+	router.POST("/login", authMiddleware.LoginHandler)
 	router.NoRoute(authMiddleware.MiddlewareFunc(), func(c *gin.Context) {
 		claims := jwt.ExtractClaims(c)
 		log.Printf("NoRoute claims: %#v\n", claims)
