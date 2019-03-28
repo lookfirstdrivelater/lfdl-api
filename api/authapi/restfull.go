@@ -3,6 +3,8 @@ package authapi
 import (
 	"log"
 
+	internalauthapi "github.com/lookfirstdrivelater/lfdlapi/internal/authapi"
+
 	jwt "github.com/appleboy/gin-jwt"
 	"github.com/gin-gonic/gin"
 )
@@ -10,7 +12,7 @@ import (
 func SetupRouter() *gin.Engine {
 	router := gin.Default()
 
-	authMiddleware, _ := authMiddleware()
+	authMiddleware, _ := internalauthapi.AuthMiddleware()
 
 	router.GET("/login", authMiddleware.LoginHandler)
 	router.NoRoute(authMiddleware.MiddlewareFunc(), func(c *gin.Context) {
