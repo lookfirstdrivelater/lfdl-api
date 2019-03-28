@@ -31,7 +31,7 @@ func TestPing(t *testing.T) {
 		"message": "pong",
 	}
 	// Grab our router
-	router := setupRouter()
+	router := SetupRouter()
 	// Perform a GET request with that handler.
 	w := performRequest(router, "GET", "/ping")
 	// Assert we encoded correctly,
@@ -56,7 +56,7 @@ func TestLogin(t *testing.T) {
 	// 	"token":  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NTM2MzM3MTEsImlkIjoiYWRtaW4iLCJvcmlnX2lhdCI6MTU1MzYzMDExMX0.6n1vrhIJq_Xqgf67NuGwWU3Hlx5zysBdE6lZrngqYBA",
 	// }
 	// Grab our router
-	router := setupRouter()
+	router := SetupRouter()
 	// Perform a POST request with that handler.
 	w := performRequest(router, "GET", "/login?username=admin&password=admin")
 	// Assert we encoded correctly,
@@ -76,7 +76,7 @@ func TestLogin(t *testing.T) {
 func TestBadRequest(t *testing.T) {
 	// Build our expected body
 	// Grab our router
-	router := setupRouter()
+	router := SetupRouter()
 	// Perform a POST request with that handler.
 	w := performRequest(router, "GET", "/fg")
 	// Assert we encoded correctly,
@@ -94,7 +94,7 @@ func TestBadRequest(t *testing.T) {
 }
 
 func Login() string {
-	router := setupRouter()
+	router := SetupRouter()
 	w := performRequest(router, "GET", "/login?username=admin&password=admin")
 	var response map[string]string
 	err := json.Unmarshal([]byte(w.Body.String()), &response)
