@@ -9,6 +9,8 @@ import (
 	"github.com/gin-contrib/rollbar"
 	"github.com/joho/godotenv"
 	"github.com/stvp/roll"
+
+	"github.com/lookfirstdrivelater/lfdlapi/api/authapi"
 )
 
 const versionNumber = "0.3.0"
