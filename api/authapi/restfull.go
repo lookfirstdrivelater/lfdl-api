@@ -1,9 +1,8 @@
 package authapi
 
 import (
-	"log"
+	"github.com/lookfirstdrivelater/lfdlapi/internal/handlers"
 
-	jwt "github.com/appleboy/gin-jwt"
 	"github.com/gin-gonic/gin"
 	"github.com/lookfirstdrivelater/lfdlapi/internal/middleware"
 )
@@ -15,11 +14,7 @@ func SetupRouter() *gin.Engine {
 	authMiddleware, _ := middleware.AuthMiddleware()
 
 	router.POST("/login", authMiddleware.LoginHandler)
-	router.NoRoute(authMiddleware.MiddlewareFunc(), func(c *gin.Context) {
-		claims := jwt.ExtractClaims(c)
-		log.Printf("NoRoute claims: %#v\n", claims)
-		c.JSON(404, gin.H{"code": "PAGE_NOT_FOUND", "message": "Page not found"})
-	})
+	router.NoRoute(authMiddleware.MiddlewareFunc(), handlers.NoRouteHandler)
 
 	authRouter := router.Group("/auth")
 	// Refresh time can be longer than token timeout
