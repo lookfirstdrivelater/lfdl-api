@@ -52,7 +52,7 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	router := SetupRouter()
+	router := authapi.SetupRouter()
 
 	roll.Token = os.Getenv("RollBarToken")
 	roll.Endpoint = os.Getenv("RollBarEnv")
