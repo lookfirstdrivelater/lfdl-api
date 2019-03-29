@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type Users struct {
+type users struct {
 	gorm.Model
 	UserName  string
 	FirstName string
@@ -16,17 +16,17 @@ type Users struct {
 	Password  string
 }
 
-type Event struct {
+type event struct {
 	gorm.Model
 	StartTime time.Time
 	EndTime   time.Time
 }
 
 // SetupRouter sets up the router so it can be used in the main and in testing
-func SetupRouter(db *gorm.DB) *gin.Engine {
+func setupRouter(db *gorm.DB) *gin.Engine {
 	router := gin.Default()
 
-	authMiddleware, _ := AuthMiddleware(db)
+	authMiddleware, _ := authMiddleware(db)
 
 	router.POST("/login", authMiddleware.LoginHandler)
 	router.NoRoute(authMiddleware.MiddlewareFunc(), NoRouteHandler)

@@ -58,7 +58,7 @@ func main() {
 		log.Fatalln("database init failed")
 	}
 
-	args := fmt.Sprint("matt" + ":" + "Behnke22" + "@/" + "lfdlstaging" + "?charset=utf8&parseTime=True&loc=Local")
+	args := fmt.Sprint(os.Getenv("DatabaseUsername") + ":" + os.Getenv("DatabasePassword") + "@/" + os.Getenv("DatabaseName") + "?charset=utf8&parseTime=True&loc=Local")
 	db, err := gorm.Open("mysql", args)
 	if err != nil {
 		log.Println(err)
@@ -66,20 +66,20 @@ func main() {
 	}
 	defer db.Close()
 
-	if !db.HasTable(Event{}) {
-		db.AutoMigrate(Event{})
+	if !db.HasTable(event{}) {
+		db.AutoMigrate(event{})
 		log.Println("Migrating Event")
 	}
-	if !db.HasTable(Users{}) {
-		db.AutoMigrate(Users{})
+	if !db.HasTable(users{}) {
+		db.AutoMigrate(users{})
 		log.Println("Migrating Users")
 
-		pass, _ := HashPassword("Admin")
+		pass, _ := hashPassword("Admin")
 
-		db.Create(&Users{UserName: "Admin", FirstName: "Matt", LastName: "Behnke", Password: pass})
+		db.Create(&users{UserName: "Admin", FirstName: "Matt", LastName: "Behnke", Password: pass})
 	}
 
-	router := SetupRouter(db)
+	router := setupRouter(db)
 
 	roll.Token = os.Getenv("RollBarToken")
 	roll.Endpoint = os.Getenv("RollBarEnv")

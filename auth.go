@@ -25,7 +25,7 @@ type User struct {
 
 var identityKey = "id"
 
-func AuthMiddleware(db *gorm.DB) (*jwt.GinJWTMiddleware, error) {
+func authMiddleware(db *gorm.DB) (*jwt.GinJWTMiddleware, error) {
 	authMiddleware, err := jwt.New(&jwt.GinJWTMiddleware{
 		Realm:       "test zone",
 		Key:         []byte("secret key"),
@@ -54,7 +54,7 @@ func AuthMiddleware(db *gorm.DB) (*jwt.GinJWTMiddleware, error) {
 			userName := loginVals.Username
 			// password := loginVals.Password
 
-			var user Users
+			var user users
 			db.First(&user, "user_name = ?", userName)
 			// if (userID == "admin" && password == "admin") || (userID == "test" && password == "test") {
 			// 	return &User{
