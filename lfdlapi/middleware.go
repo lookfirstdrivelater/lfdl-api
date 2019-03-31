@@ -1,31 +1,14 @@
-package main
+package lfdlapi
 
 import (
-	"log"
-	"time"
-
-	"github.com/jinzhu/gorm"
-	"github.com/stvp/roll"
-
+	"fmt"
 	jwt "github.com/appleboy/gin-jwt"
 	"github.com/gin-gonic/gin"
+	"log"
+	"time"
 )
 
-type login struct {
-	Username string `form:"username" json:"username" binding:"required"`
-	Password string `form:"password" json:"password" binding:"required"`
-}
-
-// User a user struct
-type User struct {
-	UserName  string
-	FirstName string
-	LastName  string
-}
-
-var identityKey = "id"
-
-func AuthMiddleware(db *gorm.DB) (*jwt.GinJWTMiddleware, error) {
+func authMiddleware() (*jwt.GinJWTMiddleware, error) {
 	authMiddleware, err := jwt.New(&jwt.GinJWTMiddleware{
 		Realm:       "test zone",
 		Key:         []byte("secret key"),
@@ -33,7 +16,7 @@ func AuthMiddleware(db *gorm.DB) (*jwt.GinJWTMiddleware, error) {
 		MaxRefresh:  time.Hour,
 		IdentityKey: identityKey,
 		PayloadFunc: func(data interface{}) jwt.MapClaims {
-			if v, ok := data.(*User); ok {
+			if v, ok := data.(*user); ok {
 				return jwt.MapClaims{
 					identityKey: v.UserName,
 				}
@@ -42,7 +25,7 @@ func AuthMiddleware(db *gorm.DB) (*jwt.GinJWTMiddleware, error) {
 		},
 		IdentityHandler: func(c *gin.Context) interface{} {
 			claims := jwt.ExtractClaims(c)
-			return &User{
+			return &user{
 				UserName: claims["id"].(string),
 			}
 		},
@@ -52,25 +35,32 @@ func AuthMiddleware(db *gorm.DB) (*jwt.GinJWTMiddleware, error) {
 				return "", jwt.ErrMissingLoginValues
 			}
 			userName := loginVals.Username
-			// password := loginVals.Password
+			password := loginVals.Password
 
-			var user Users
-			db.First(&user, "user_name = ?", userName)
-			// if (userID == "admin" && password == "admin") || (userID == "test" && password == "test") {
-			// 	return &User{
-			// 		UserName:  userID,
-			// 		LastName:  "Bo-Yi",
-			// 		FirstName: "Wu",
-			// 	}, nil
-			// }
+			var localUser user
+			db.Where("user_name = ?", userName).First(&localUser)
+
+
+			if userName == localUser.UserName  && checkPasswordHash(password, localUser.Password) {
+				return &user{
+					UserName: localUser.UserName,
+					FirstName:localUser.FirstName,
+					LastName: localUser.LastName,
+				}, nil
+
+			}
 
 			return nil, jwt.ErrFailedAuthentication
 		},
 		Authorizator: func(data interface{}, c *gin.Context) bool {
-			if v, ok := data.(*User); ok && v.UserName == "admin" {
-				return true
+			fmt.Println("here")
+			if v, ok := data.(*user); ok {
+				var localUser user
+				db.Where("user_name = ?", v.UserName).First(&localUser)
+				if localUser.AuthGeneral {
+					return true
+				}
 			}
-
 			return false
 		},
 		Unauthorized: func(c *gin.Context, code int, message string) {
@@ -98,9 +88,9 @@ func AuthMiddleware(db *gorm.DB) (*jwt.GinJWTMiddleware, error) {
 		TimeFunc: time.Now,
 	})
 	if err != nil {
-		roll.Error(err, map[string]string{})
 		log.Fatal("JWT Error:" + err.Error())
 	}
 
 	return authMiddleware, err
 }
+

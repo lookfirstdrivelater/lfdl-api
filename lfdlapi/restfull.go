@@ -1,32 +1,14 @@
-package main
+package lfdlapi
 
 import (
-	"time"
-
-	"github.com/jinzhu/gorm"
-
 	"github.com/gin-gonic/gin"
 )
 
-type Users struct {
-	gorm.Model
-	UserName  string
-	FirstName string
-	LastName  string
-	Password  string
-}
-
-type Event struct {
-	gorm.Model
-	StartTime time.Time
-	EndTime   time.Time
-}
-
 // SetupRouter sets up the router so it can be used in the main and in testing
-func SetupRouter(db *gorm.DB) *gin.Engine {
+func setupRouter() *gin.Engine {
 	router := gin.Default()
 
-	authMiddleware, _ := AuthMiddleware(db)
+	authMiddleware, _ := authMiddleware()
 
 	router.POST("/login", authMiddleware.LoginHandler)
 	router.NoRoute(authMiddleware.MiddlewareFunc(), NoRouteHandler)
@@ -36,7 +18,7 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 	authRouter.GET("/refresh_token", authMiddleware.RefreshHandler)
 	authRouter.Use(authMiddleware.MiddlewareFunc())
 	{ // all our auth routes
-		authRouter.GET("/hello", helloHandler)
+		// authRouter.GET("/hello", helloHandler)
 	}
 
 	// not auth routes
@@ -44,3 +26,11 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 
 	return router
 }
+
+// login data that binds to the data submitted
+type login struct {
+	Username string `form:"username" json:"username" binding:"required"`
+	Password string `form:"password" json:"password" binding:"required"`
+}
+
+var identityKey = "id"

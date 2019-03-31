@@ -1,4 +1,4 @@
-package main
+package lfdlapi
 
 import (
 	"log"
@@ -26,11 +26,11 @@ func NoRouteHandler(c *gin.Context) {
 
 func helloHandler(c *gin.Context) {
 	claims := jwt.ExtractClaims(c)
-	user, _ := c.Get(identityKey)
+	// user, _ := c.Get(identityKey)
 	c.JSON(200, gin.H{
-		"userID":   claims["id"],
-		"userName": user.(*User).UserName,
-		"text":     "Hello World.",
+		"userID": claims["id"],
+		// "userName": user.(*user).UserName,
+		"text": "Hello World.",
 	})
 }
 
