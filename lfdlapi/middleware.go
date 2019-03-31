@@ -4,11 +4,19 @@ import (
 	"fmt"
 	jwt "github.com/appleboy/gin-jwt"
 	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/gorm"
 	"log"
 	"time"
 )
 
-func authMiddleware() (*jwt.GinJWTMiddleware, error) {
+type login struct {
+	Username string `form:"username" json:"username" binding:"required"`
+	Password string `form:"password" json:"password" binding:"required"`
+}
+
+var identityKey = "id"
+
+func authMiddleware(db *gorm.DB) (*jwt.GinJWTMiddleware, error) {
 	authMiddleware, err := jwt.New(&jwt.GinJWTMiddleware{
 		Realm:       "test zone",
 		Key:         []byte("secret key"),
@@ -40,7 +48,6 @@ func authMiddleware() (*jwt.GinJWTMiddleware, error) {
 			var localUser user
 			db.Where("user_name = ?", userName).First(&localUser)
 
-
 			if userName == localUser.UserName  && checkPasswordHash(password, localUser.Password) {
 				return &user{
 					UserName: localUser.UserName,
@@ -49,7 +56,6 @@ func authMiddleware() (*jwt.GinJWTMiddleware, error) {
 				}, nil
 
 			}
-
 			return nil, jwt.ErrFailedAuthentication
 		},
 		Authorizator: func(data interface{}, c *gin.Context) bool {
