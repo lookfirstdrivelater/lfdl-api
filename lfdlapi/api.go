@@ -3,6 +3,8 @@ package lfdlapi
 import (
 	"fmt"
 	"log"
+	"os"
+	"strconv"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -18,12 +20,12 @@ type event struct {
 
 type user struct {
 	gorm.Model
-	UserName  string
-	FirstName string
-	LastName  string
-	Password  string
+	UserName    string
+	FirstName   string
+	LastName    string
+	Password    string
 	AuthGeneral bool
-	AuthAdmin bool
+	AuthAdmin   bool
 }
 
 // db ...
@@ -43,15 +45,27 @@ func API(DB *gorm.DB) {
 		DB.AutoMigrate(user{})
 		log.Println("Migrating Users")
 
-		pass, err := hashPassword("admin")
+		pass, err := hashPassword(os.Getenv("DatabaseDefaultAdminPassword"))
 
 		fmt.Println(err)
 
-		db.Create(&user{UserName: "admin", FirstName: "Matt", LastName: "Behnke", Password: pass})
+		isGeneral, _ := strconv.ParseBool(os.Getenv("DatabaseDefaultAdminLevelGeneral"))
+		isAdmin, _  := strconv.ParseBool(os.Getenv("DatabaseDefaultAdminLevelAdmin"))
+
+		db.Create(&user{
+			UserName:  os.Getenv("DatabaseDefaultAdminUserName"),
+			FirstName: os.Getenv("DatabaseDefaultAdminFirstName"),
+			LastName:  os.Getenv("DatabaseDefaultAdminLastName"),
+			Password:  pass,
+			AuthGeneral: isGeneral,
+			AuthAdmin: isAdmin,
+
+
+		})
 	}
 
-	// create restfull router
+	// create restful router
 	router := setupRouter()
 	// start the server
-	router.Run(fmt.Sprintf(":8080"))
+	router.Run(fmt.Sprintf(":8081"))
 }

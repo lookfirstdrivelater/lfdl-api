@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	"log"
+	"net/http"
 	"time"
 )
 
@@ -48,18 +49,17 @@ func authMiddleware(db *gorm.DB) (*jwt.GinJWTMiddleware, error) {
 			var localUser user
 			db.Where("user_name = ?", userName).First(&localUser)
 
-			if userName == localUser.UserName  && checkPasswordHash(password, localUser.Password) {
+			if userName == localUser.UserName && checkPasswordHash(password, localUser.Password) {
 				return &user{
-					UserName: localUser.UserName,
-					FirstName:localUser.FirstName,
-					LastName: localUser.LastName,
+					UserName:  localUser.UserName,
+					FirstName: localUser.FirstName,
+					LastName:  localUser.LastName,
 				}, nil
 
 			}
 			return nil, jwt.ErrFailedAuthentication
 		},
 		Authorizator: func(data interface{}, c *gin.Context) bool {
-			fmt.Println("here")
 			if v, ok := data.(*user); ok {
 				var localUser user
 				db.Where("user_name = ?", v.UserName).First(&localUser)
@@ -100,3 +100,39 @@ func authMiddleware(db *gorm.DB) (*jwt.GinJWTMiddleware, error) {
 	return authMiddleware, err
 }
 
+
+// this middleware allows us to auth users for only the routes they are authorized for
+func groupAuthorizator(group string, authMiddleware *jwt.GinJWTMiddleware) gin.HandlerFunc {
+
+	return func(c *gin.Context) {
+		switch group {
+		case "general":
+			usr, _ := c.Get("id")
+
+			var localUser user
+			db.Where("user_name = ?", usr.(*user).UserName).First(&localUser)
+			if !localUser.AuthGeneral {
+				authMiddleware.Unauthorized(c, http.StatusUnauthorized, authMiddleware.HTTPStatusMessageFunc(jwt.ErrForbidden, c))
+				c.AbortWithStatus(http.StatusUnauthorized)
+			}
+			c.Next()
+			return
+		case "admin":
+			usr, _ := c.Get("id")
+
+			var localUser user
+			db.Where("user_name = ?", usr.(*user).UserName).First(&localUser)
+			if !localUser.AuthAdmin {
+				authMiddleware.Unauthorized(c, http.StatusUnauthorized, authMiddleware.HTTPStatusMessageFunc(jwt.ErrForbidden, c))
+				c.AbortWithStatus(http.StatusUnauthorized)
+			}
+			c.Next()
+			return
+		default:
+			fmt.Println("here")
+			//authMiddleware.Unauthorized(c, http.StatusForbidden, authMiddleware.HTTPStatusMessageFunc(jwt.ErrForbidden, c))
+		}
+
+	}
+
+}

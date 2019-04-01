@@ -8,7 +8,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// healthCheckHandler is a general healthcheck handler
+// noRouteHandler is a general no route handler
+func noRouteHandler(c *gin.Context) {
+	claims := jwt.ExtractClaims(c)
+	log.Printf("NoRoute claims: %#v\n", claims)
+	c.JSON(404, gin.H{"code": "PAGE_NOT_FOUND", "message": "Page not found"})
+}
+
+// healthCheckHandler is a general health check handler
 func healthCheckHandler(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"ServiceName": "xyz",
@@ -17,20 +24,10 @@ func healthCheckHandler(c *gin.Context) {
 	})
 }
 
-// noRouteHandler is a general no route handler
-func noRouteHandler(c *gin.Context) {
+func whoAmI(c *gin.Context) {
 	claims := jwt.ExtractClaims(c)
-	log.Printf("NoRoute claims: %#v\n", claims)
-	c.JSON(404, gin.H{"code": "PAGE_NOT_FOUND", "message": "Page not found"})
-}
-
-func helloHandler(c *gin.Context) {
-	claims := jwt.ExtractClaims(c)
-	// user, _ := c.Get(identityKey)
 	c.JSON(200, gin.H{
 		"userID": claims["id"],
-		// "userName": user.(*user).UserName,
-		"text": "Hello World.",
 	})
 }
 

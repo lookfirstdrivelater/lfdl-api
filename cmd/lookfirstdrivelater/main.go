@@ -54,7 +54,6 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-
 	args := fmt.Sprint(os.Getenv("DatabaseUsername") + ":" + os.Getenv("DatabasePassword") + "@/" + os.Getenv("DatabaseName") + "?charset=utf8&parseTime=True&loc=Local")
 	db, err := gorm.Open("mysql", args)
 	if err != nil {

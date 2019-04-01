@@ -4,8 +4,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-
-
 // SetupRouter sets up the router so it can be used in the main and in testing
 func setupRouter() *gin.Engine {
 	router := gin.Default()
@@ -20,12 +18,22 @@ func setupRouter() *gin.Engine {
 	authRouter.GET("/refresh_token", authMiddleware.RefreshHandler)
 	authRouter.Use(authMiddleware.MiddlewareFunc())
 	{ // all our auth routes
-		// authRouter.GET("/hello", helloHandler)
+		authRouter.GET("/whoami", whoAmI)
+		generalRouter := authRouter.Group("/general")
+		generalRouter.Use(groupAuthorizator("general", authMiddleware))
+		{
+			generalRouter.GET("/test", pingHandler)
+		}
+		adminRouter := authRouter.Group("/admin")
+		adminRouter.Use(groupAuthorizator("admin", authMiddleware))
+		{
+			adminRouter.GET("/test", pingHandler)
+		}
 	}
 
-	// not auth routes
+	// non auth routes
 	router.GET("/ping", pingHandler)
+	router.GET("/healthcheck", healthCheckHandler)
 
 	return router
 }
-
