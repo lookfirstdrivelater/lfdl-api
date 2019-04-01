@@ -28,7 +28,6 @@ type user struct {
 	AuthAdmin   bool
 }
 
-// db ...
 var db *gorm.DB
 
 // API is the main entry point for this lib
@@ -46,11 +45,10 @@ func API(DB *gorm.DB) {
 		log.Println("Migrating Users")
 
 		pass, err := hashPassword(os.Getenv("DatabaseDefaultAdminPassword"))
-
-		fmt.Println(err)
-
 		isGeneral, _ := strconv.ParseBool(os.Getenv("DatabaseDefaultAdminLevelGeneral"))
 		isAdmin, _  := strconv.ParseBool(os.Getenv("DatabaseDefaultAdminLevelAdmin"))
+
+		fmt.Println(err)
 
 		db.Create(&user{
 			UserName:  os.Getenv("DatabaseDefaultAdminUserName"),
@@ -67,5 +65,5 @@ func API(DB *gorm.DB) {
 	// create restful router
 	router := setupRouter()
 	// start the server
-	router.Run(fmt.Sprintf(":8081"))
+	_ = router.Run(fmt.Sprintf(":8080"))
 }
