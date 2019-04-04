@@ -4,12 +4,12 @@ import (
 	"flag"
 	"fmt"
 	"github.com/jinzhu/gorm"
+	"github.com/lookfirstdrivelater/lfdlapi/internal/lfdlapi"
 	"log"
 	"os"
 
 	"github.com/joho/godotenv"
 
-	"github.com/lookfirstdrivelater/lfdlapi/lfdlapi"
 )
 
 const versionNumber = "0.3.0"
