@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
-systemctl deamon-reload
-systemctl enable ldflapi.service
-systemctl restart ldflapi.service
+sudo systemctl daemon-reload
+sudo systemctl enable ldflapi.service
+sudo  systemctl restart ldflapi.service
