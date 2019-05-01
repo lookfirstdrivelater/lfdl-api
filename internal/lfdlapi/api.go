@@ -16,6 +16,12 @@ type event struct {
 	gorm.Model
 	StartTime time.Time
 	EndTime   time.Time
+	Points  string
+	EventType string
+	Severity  string
+	CenterX string
+	CenterY string
+
 }
 
 type user struct {
