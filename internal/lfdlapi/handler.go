@@ -16,21 +16,21 @@ func noRouteHandler(c *gin.Context) {
 	c.JSON(404, gin.H{"code": "PAGE_NOT_FOUND", "message": "Page not found"})
 }
 
-// healthCheckHandler is a general health check handler
-func healthCheckHandler(c *gin.Context) {
-	c.JSON(200, gin.H{
-		"ServiceName": "xyz",
-		"Version":     "0.0.1",
-		"health":      "good",
-	})
-}
-
-func whoAmI(c *gin.Context) {
-	claims := jwt.ExtractClaims(c)
-	c.JSON(200, gin.H{
-		"userID": claims["id"],
-	})
-}
+//// healthCheckHandler is a general health check handler
+//func healthCheckHandler(c *gin.Context) {
+//	c.JSON(200, gin.H{
+//		"ServiceName": "xyz",
+//		"Version":     "0.0.1",
+//		"health":      "good",
+//	})
+//}
+//
+//func whoAmI(c *gin.Context) {
+//	claims := jwt.ExtractClaims(c)
+//	c.JSON(200, gin.H{
+//		"userID": claims["id"],
+//	})
+//}
 
 func pingHandler(c *gin.Context) {
 	c.JSON(200, gin.H{
@@ -126,7 +126,6 @@ func readEventHandler(c *gin.Context) {
 			message = message + ": rightLongitude can not be empty"
 		}
 
-
 		c.JSON(218, gin.H{
 			"message": "bad pram",
 		})
@@ -174,7 +173,5 @@ func deleteEventHandler(c *gin.Context) {
 			"status": 200,
 		})
 	}
-
-
 
 }

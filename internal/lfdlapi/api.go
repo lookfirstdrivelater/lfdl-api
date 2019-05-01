@@ -63,8 +63,6 @@ func API(DB *gorm.DB) {
 			Password:  pass,
 			AuthGeneral: isGeneral,
 			AuthAdmin: isAdmin,
-
-
 		})
 	}
 

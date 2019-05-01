@@ -1,12 +1,10 @@
 package lfdlapi
 
 import (
-	"fmt"
 	jwt "github.com/appleboy/gin-jwt"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	"log"
-	"net/http"
 	"time"
 )
 
@@ -101,38 +99,38 @@ func authMiddleware(db *gorm.DB) (*jwt.GinJWTMiddleware, error) {
 }
 
 
-// this middleware allows us to auth users for only the routes they are authorized for
-func groupAuthorizator(group string, authMiddleware *jwt.GinJWTMiddleware) gin.HandlerFunc {
-
-	return func(c *gin.Context) {
-		switch group {
-		case "general":
-			usr, _ := c.Get("id")
-
-			var localUser user
-			db.Where("user_name = ?", usr.(*user).UserName).First(&localUser)
-			if !localUser.AuthGeneral {
-				authMiddleware.Unauthorized(c, http.StatusUnauthorized, authMiddleware.HTTPStatusMessageFunc(jwt.ErrForbidden, c))
-				c.AbortWithStatus(http.StatusUnauthorized)
-			}
-			c.Next()
-			return
-		case "admin":
-			usr, _ := c.Get("id")
-
-			var localUser user
-			db.Where("user_name = ?", usr.(*user).UserName).First(&localUser)
-			if !localUser.AuthAdmin {
-				authMiddleware.Unauthorized(c, http.StatusUnauthorized, authMiddleware.HTTPStatusMessageFunc(jwt.ErrForbidden, c))
-				c.AbortWithStatus(http.StatusUnauthorized)
-			}
-			c.Next()
-			return
-		default:
-			fmt.Println("here")
-			//authMiddleware.Unauthorized(c, http.StatusForbidden, authMiddleware.HTTPStatusMessageFunc(jwt.ErrForbidden, c))
-		}
-
-	}
-
-}
+//// this middleware allows us to auth users for only the routes they are authorized for
+//func groupAuthorizator(group string, authMiddleware *jwt.GinJWTMiddleware) gin.HandlerFunc {
+//
+//	return func(c *gin.Context) {
+//		switch group {
+//		case "general":
+//			usr, _ := c.Get("id")
+//
+//			var localUser user
+//			db.Where("user_name = ?", usr.(*user).UserName).First(&localUser)
+//			if !localUser.AuthGeneral {
+//				authMiddleware.Unauthorized(c, http.StatusUnauthorized, authMiddleware.HTTPStatusMessageFunc(jwt.ErrForbidden, c))
+//				c.AbortWithStatus(http.StatusUnauthorized)
+//			}
+//			c.Next()
+//			return
+//		case "admin":
+//			usr, _ := c.Get("id")
+//
+//			var localUser user
+//			db.Where("user_name = ?", usr.(*user).UserName).First(&localUser)
+//			if !localUser.AuthAdmin {
+//				authMiddleware.Unauthorized(c, http.StatusUnauthorized, authMiddleware.HTTPStatusMessageFunc(jwt.ErrForbidden, c))
+//				c.AbortWithStatus(http.StatusUnauthorized)
+//			}
+//			c.Next()
+//			return
+//		default:
+//			fmt.Println("here")
+//			//authMiddleware.Unauthorized(c, http.StatusForbidden, authMiddleware.HTTPStatusMessageFunc(jwt.ErrForbidden, c))
+//		}
+//
+//	}
+//
+//}

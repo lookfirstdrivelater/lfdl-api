@@ -8,10 +8,10 @@ import (
 func setupRouter() *gin.Engine {
 	router := gin.Default()
 
-	//authMiddleware, _ := authMiddleware(db)
+	authMiddleware, _ := authMiddleware(db)
 
 	//router.POST("/login", authMiddleware.LoginHandler)
-	//router.NoRoute(authMiddleware.MiddlewareFunc(), noRouteHandler)
+	router.NoRoute(authMiddleware.MiddlewareFunc(), noRouteHandler)
 	//
 	//authRouter := router.Group("/auth")
 	//// Refresh time can be longer than token timeout
