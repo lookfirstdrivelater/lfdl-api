@@ -62,6 +62,6 @@ func main() {
 	}
 	defer db.Close()
 
-	// after other services are added then we can make this a go routene
+	// after other services are added we can run this in a thread
 	lfdlapi.API(db)
 }
