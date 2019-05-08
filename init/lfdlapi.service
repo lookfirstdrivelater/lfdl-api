@@ -1,0 +1,18 @@
+[Unit]
+Description=Runs api on the server
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Restart=always
+StartLimitInterval=1
+StartLimitBurst=10000
+Type=simple
+LimitNOFILE=599000
+Nice=-20
+
+WorkingDirectory=/opt/services/lookfirstdrivelater/
+ExecStart=/opt/services/lookfirstdrivelater/lookfirstdrivelater
+
+[Install]
+WantedBy=multi-user.target
