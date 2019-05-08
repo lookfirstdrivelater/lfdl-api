@@ -1,6 +1,7 @@
 package lfdlapi
 
 import (
+	"fmt"
 	"log"
 	"strconv"
 	"time"
@@ -82,13 +83,15 @@ func createEventHandler(c *gin.Context) {
 			message = message + ": error parsing startTime or endTime"
 		}
 
+		fmt.Println(message, err)
+
 		c.JSON(418, gin.H{
 			"message": message,
 		})
 	} else {
 
 
-		create := db.Create(&event{
+		create := db.Create(&Event{
 			StartTime: startTimeConvert,
 			EndTime:   endTimeConvert,
 			Points:    points,
@@ -136,7 +139,7 @@ func readEventHandler(c *gin.Context) {
 		leftLongitudeInt, _ := strconv.ParseFloat(leftLongitude,64)
 		rightLongitudeInt, _ := strconv.ParseFloat(rightLongitude,64)
 
-		var events []event
+		var events []Event
 		db.Where("center_y BETWEEN ? AND ?",bottomLatitudeInt, topLatitudeInt).Where("center_x BETWEEN ? AND ?",leftLongitudeInt, rightLongitudeInt).Find(&events)
 
 		c.JSON(200, gin.H{
@@ -163,15 +166,8 @@ func deleteEventHandler(c *gin.Context) {
 		message = message + "id must be a int"
 	}
 
-	db.Where("id = ?", idInt).Delete(&event{})
-
-	if message == "" {
-		c.JSON(418, gin.H{
-			"message": message,})
-	} else{
+	db.Where("id = ?", idInt).Delete(&Event{})
 		c.JSON(200, gin.H{
-			"status": 200,
+			"message": message,
 		})
-	}
-
 }

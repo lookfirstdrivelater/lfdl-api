@@ -12,7 +12,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
-type event struct {
+type Event struct {
 	gorm.Model
 	StartTime time.Time
 	EndTime   time.Time
@@ -21,7 +21,6 @@ type event struct {
 	Severity  string
 	CenterX string
 	CenterY string
-
 }
 
 type user struct {
@@ -42,10 +41,10 @@ func API(DB *gorm.DB) {
 	db = DB
 
 	// run migrations only if the tables do not exist
-	if !DB.HasTable(event{}) {
-		DB.AutoMigrate(event{})
+	//if !DB.HasTable(event{}) {
+		DB.AutoMigrate(Event{})
 		log.Println("Migrating Event")
-	}
+	//}
 	if !DB.HasTable(user{}) {
 		DB.AutoMigrate(user{})
 		log.Println("Migrating Users")
